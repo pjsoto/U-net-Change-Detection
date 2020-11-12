@@ -7,5 +7,8 @@ Amazon rainforest(Brazilian Legal Amazon) and Brazilian savannah (Cerrado). Rega
 
 2- Tensorflow 1.14.0
 
+# Train and Test
+To run the training and testing stages execute the script Main_Script_
+
 # References
 [1]Ronneberger, Olaf; Fischer, Philipp; Brox, Thomas (2015). "U-Net: Convolutional Networks for Biomedical Image Segmentation". arXiv:1505.04597 [cs.CV].
