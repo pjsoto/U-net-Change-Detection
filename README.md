@@ -7,7 +7,7 @@ The current project contains the scripts to perform a change detection classific
 2- Tensorflow 1.14.0
 
 # Train and Test
-To run the training and testing stages execute python Main_Script_Executor_Tr_ARO_Ts_ARO_APA_CMA.py. From such a script, all main functions will be executed. Specifically, in this case, the code is prepared to train the classifier on Amazon-RO and test in Amazon-RO, Amazon-PA, and Cerrado-MA. 
+To run the training and testing stages execute python Main_Script_Executor_Tr_ARO_Ts_ARO_APA_CMA.py. From such a script, all main functions will be executed. Specifically, in this case, the code is prepared to train the classifier on Amazon-RO and test in Amazon-RO, Amazon-PA, and Cerrado-MA. In each region, metrics computations are performed attending only to a threshold equal to 0.5 as well as for different values varying between 1 to 0, aiming at computing Precision vs Recall curves.
 
 # References
 [1]Ronneberger, Olaf; Fischer, Philipp; Brox, Thomas (2015). "U-Net: Convolutional Networks for Biomedical Image Segmentation". arXiv:1505.04597 [cs.CV].
