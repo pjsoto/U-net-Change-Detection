@@ -4,7 +4,8 @@ Amazon rainforest(Brazilian Legal Amazon) and Brazilian savannah (Cerrado). Rega
 
 # Pre-requisites
 1- Python 3.7.4
-3- Tensorflow 1.14.0
+
+2- Tensorflow 1.14.0
 
 # References
 [1]Ronneberger, Olaf; Fischer, Philipp; Brox, Thomas (2015). "U-Net: Convolutional Networks for Biomedical Image Segmentation". arXiv:1505.04597 [cs.CV].
