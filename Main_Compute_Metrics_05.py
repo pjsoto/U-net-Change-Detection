@@ -7,7 +7,7 @@ import tensorflow as tf
 import skimage.morphology
 from datetime import datetime
 import matplotlib.pyplot as plt
-from skimage.morphology import square, disk 
+from skimage.morphology import square, disk
 from sklearn.preprocessing import StandardScaler
 
 
@@ -58,20 +58,20 @@ parser.add_argument('--dataset_main_path', dest='dataset_main_path', type=str, d
 args = parser.parse_args()
 
 def Main():
-    
+
     Thresholds = np.array([0.5])
     if args.dataset == 'Amazon_RO':
         args.dataset = 'Amazonia_Legal/'
         dataset = AMAZON_RO(args)
-        
+
     if args.dataset == 'Amazon_PA':
         args.dataset = 'Amazonia_Legal/'
         dataset = AMAZON_PA(args)
-    
+
     if args.dataset == 'Cerrado_MA':
         args.dataset = 'Cerrado_Biome/'
         dataset = CERRADO_MA(args)
-    
+
     args.results_dir = './results/' + args.results_dir + '/'
     args.checkpoint_dir = './checkpoints/' + args.checkpoint_dir + '/'
     counter = 0
@@ -82,40 +82,40 @@ def Main():
         if os.path.exists(Hit_map_path):
             hit_map = np.load(Hit_map_path)
             fields_file = files[i].split('_')
-            checkpoint_name = fields_file[0] + '_' + fields_file[3] + '_' + fields_file[1] + '_' + fields_file[4] + '_' + fields_file[5] + '_' + fields_file[6] + '_' + fields_file[7] + '_'+ fields_file[8] + '_' + fields_file[9] + '_' + fields_file[10] + '_' + fields_file[11] 
-            args.save_checkpoint_path = args.checkpoint_dir + '/' + checkpoint_name + '/' 
-            #need to put the path of the checkpoint to recover if needed the original train, validation, and test tiles.
-            dataset.Tiles_Configuration(args, i)
+            checkpoint_name = fields_file[0] + '_' + fields_file[3] + '_' + fields_file[1] + '_' + fields_file[4] + '_' + fields_file[5] + '_' + fields_file[6] + '_' + fields_file[7] + '_'+ fields_file[8] + '_' + fields_file[9] + '_' + fields_file[10] + '_' + fields_file[11]
+            args.save_checkpoint_path = args.checkpoint_dir + '/' + checkpoint_name + '/'
             
+            dataset.Tiles_Configuration(args, i)
+
             if args.save_result_text:
                 # Open a file in order to save the training history
                 f = open(args.results_dir + "/Results.txt","a")
                 if counter == 0:
-                    ACCURACY_ = []  
+                    ACCURACY_ = []
                     FSCORE_ = []
                     RECALL_ = []
-                    PRECISION_ = [] 
-                    ALERT_AREA_ = []  
-        
+                    PRECISION_ = []
+                    ALERT_AREA_ = []
+
             ACCURACY, FSCORE, RECALL, PRECISION, CONFUSION_MATRIX, ALERT_AREA = Metrics_For_Test(hit_map,
                                                                                                  dataset.references[0], dataset.references[1],
                                                                                                  dataset.Train_tiles, dataset.Valid_tiles, dataset.Undesired_tiles,
                                                                                                  Thresholds,
                                                                                                 args)
-            
+
             if args.save_result_text:
-                
+
                 ACCURACY_.append(ACCURACY[0,0])
                 FSCORE_.append(FSCORE[0,0])
                 RECALL_.append(RECALL[0,0])
                 PRECISION_.append(PRECISION[0,0])
                 ALERT_AREA_.append(ALERT_AREA[0,0])
-                
+
                 f.write("Run: %d Accuracy: %.2f%% F1-Score: %.2f%% Recall: %.2f%% Precision: %.2f%% Area: %.2f%% File Name: %s\n" % (counter, ACCURACY, FSCORE, RECALL, PRECISION, ALERT_AREA, args.file))
                 f.close()
             else:
                 print('Coming up!')
-                
+
 
             counter += 1
     print(ACCURACY_)
@@ -126,15 +126,15 @@ def Main():
         RECALL_m = np.mean(RECALL_)
         PRECISION_m = np.mean(PRECISION_)
         ALERT_AREA_m = np.mean(ALERT_AREA_)
-        
-        
+
+
         ACCURACY_s = np.std(ACCURACY_)
         FSCORE_s = np.std(FSCORE_)
         RECALL_s = np.std(RECALL_)
-        PRECISION_s = np.std(PRECISION_) 
+        PRECISION_s = np.std(PRECISION_)
         ALERT_AREA_s = np.std(ALERT_AREA_)
-        
-    
+
+
         f.write("Mean: %d Accuracy: %f%% F1-Score: %f%% Recall: %f%% Precision: %f%% Area: %f%%\n" % ( 0, ACCURACY_m, FSCORE_m, RECALL_m, PRECISION_m, ALERT_AREA_m))
         f.write("Std: %d Accuracy: %.2f%% F1-Score: %.2f%% Recall: %.2f%% Precision: %.2f%% Area: %.2f%%\n" % ( 0, ACCURACY_s, FSCORE_s, RECALL_s, PRECISION_s, ALERT_AREA_s))
         f.close()

@@ -7,14 +7,13 @@ import tensorflow as tf
 import skimage.morphology
 from datetime import datetime
 import matplotlib.pyplot as plt
-from skimage.morphology import square, disk 
+from skimage.morphology import square, disk
 from sklearn.preprocessing import StandardScaler
-#from tensordash.tensordash import Tensordash, Customdash
+
 
 from Tools import*
 from Models_FC114 import*
 from Amazonia_Legal_RO import AMAZON_RO
-#from Amazonia_Legal_MT import AMAZON_MT
 from Amazonia_Legal_PA import AMAZON_PA
 from Cerrado_Biome_MA import CERRADO_MA
 parser = argparse.ArgumentParser(description='')
@@ -60,30 +59,26 @@ parser.add_argument('--dataset_main_path', dest='dataset_main_path', type=str, d
 args = parser.parse_args()
 
 def Main():
-    
+
     if args.dataset == 'Amazon_RO':
         args.dataset = 'Amazonia_Legal/'
         dataset = AMAZON_RO(args)
-    
-    # if args.dataset == 'Amazon_MT':
-    #     args.dataset = 'Amazonia_Legal/'
-    #     dataset = AMAZON_MT(args)
-        
+
     if args.dataset == 'Amazon_PA':
         args.dataset = 'Amazonia_Legal/'
         dataset = AMAZON_PA(args)
-    
+
     if args.dataset == 'Cerrado_MA':
         args.dataset = 'Cerrado_Biome/'
         dataset = CERRADO_MA(args)
-    
+
     if not os.path.exists('./results_avg/'):
         os.makedirs('./results_avg/')
-    
+
     args.average_results_dir = './results_avg/' + args.results_dir + '/'
     if not os.path.exists(args.average_results_dir):
         os.makedirs(args.average_results_dir)
-        
+
     args.results_dir = './results/' + args.results_dir + '/'
     args.checkpoint_dir = './checkpoints/' + args.checkpoint_dir + '/'
     counter = 0
@@ -101,45 +96,45 @@ def Main():
                     HIT_MAP = np.zeros_like(hit_map)
                     initial_flag = False
                 HIT_MAP += hit_map
-    
+
     dataset.Tiles_Configuration(args, 0)
     Avg_hit_map = HIT_MAP/counter
     args.file = 'Avg_Scores'
     args.results_dir = args.average_results_dir
     if not os.path.exists(args.results_dir + args.file + '/'):
         os.makedirs(args.results_dir + args.file + '/')
-    
+
     if args.save_result_text:
         # Open a file in order to save the training history
         f = open(args.results_dir + "Results.txt","a")
         if counter == 0:
-            ACCURACY_ = []  
+            ACCURACY_ = []
             FSCORE_ = []
             RECALL_ = []
-            PRECISION_ = [] 
-            ALERT_AREA_ = []  
-            
+            PRECISION_ = []
+            ALERT_AREA_ = []
+
     ACCURACY, FSCORE, RECALL, PRECISION, CONFUSION_MATRIX, ALERT_AREA = Metrics_For_Test_M(Avg_hit_map,
                                                                                         dataset.references[0], dataset.references[1],
                                                                                         dataset.Train_tiles, dataset.Valid_tiles, dataset.Undesired_tiles,
                                                                                         args)
-                
+
     if args.save_result_text:
-        
+
         ACCURACY_.append(ACCURACY[0,0])
         FSCORE_.append(FSCORE[0,0])
         RECALL_.append(RECALL[0,0])
         PRECISION_.append(PRECISION[0,0])
         ALERT_AREA_.append(ALERT_AREA[0,0])
-        #histories.sendLoss(loss = FSCORE[0 , 0], epoch = i, total_epochs = len(files))
+
         f.write("Run: %d Accuracy: %.2f%% F1-Score: %.2f%% Recall: %.2f%% Precision: %.2f%% Area: %.2f%% File Name: %s\n" % (counter, ACCURACY, FSCORE, RECALL, PRECISION, ALERT_AREA, args.file))
         f.close()
         print(ACCURACY_)
     else:
         print('Coming up!')
-        #histories.sendLoss(loss = 0.0, epoch = i, total_epochs = len(files))
 
-    
+
+
     if args.save_result_text:
         f = open(args.results_dir + "Results.txt","a")
         ACCURACY_m = np.mean(ACCURACY_)
@@ -147,20 +142,18 @@ def Main():
         RECALL_m = np.mean(RECALL_)
         PRECISION_m = np.mean(PRECISION_)
         ALERT_AREA_m = np.mean(ALERT_AREA_)
-        
-        
+
+
         ACCURACY_s = np.std(ACCURACY_)
         FSCORE_s = np.std(FSCORE_)
         RECALL_s = np.std(RECALL_)
-        PRECISION_s = np.std(PRECISION_) 
+        PRECISION_s = np.std(PRECISION_)
         ALERT_AREA_s = np.std(ALERT_AREA_)
-        
-        #histories.sendLoss(loss = FSCORE_m, epoch = i + 1, total_epochs = len(files) + 1)
+
+
         f.write("Mean: %d Accuracy: %f%% F1-Score: %f%% Recall: %f%% Precision: %f%% Area: %f%%\n" % ( 0, ACCURACY_m, FSCORE_m, RECALL_m, PRECISION_m, ALERT_AREA_m))
         f.write("Std: %d Accuracy: %.2f%% F1-Score: %.2f%% Recall: %.2f%% Precision: %.2f%% Area: %.2f%%\n" % ( 0, ACCURACY_s, FSCORE_s, RECALL_s, PRECISION_s, ALERT_AREA_s))
         f.close()
-    
+
 if __name__=='__main__':
     Main()
-    
-    
